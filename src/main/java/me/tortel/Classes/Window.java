@@ -30,7 +30,7 @@ public class Window {
     public Window() {
         this.width = 1920;
         this.height = 1080;
-        this.title = "MandelBrot set";
+        this.title = "help";//MandelBrot set
         r = 1;
         b = 1;
         g = 1;
@@ -129,7 +129,7 @@ public class Window {
 
             Time.update();
 
-            System.out.println("FPS: " + Time.getFPS());
+            //System.out.println("FPS: " + Time.getFPS());
         }
     }
 }

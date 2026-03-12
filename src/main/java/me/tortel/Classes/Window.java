@@ -1,5 +1,7 @@
 package me.tortel.Classes;
 
+import me.tortel.Listeners.KeyListener;
+import me.tortel.Listeners.MouseListener;
 import me.tortel.Util.Time;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -17,8 +19,9 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class Window {
 
-    private int width, height;
-    private String title;
+    private final int width;
+    private final int height;
+    private final String title;
     private long glfwWindow;
 
     public float r, g, b, a;
@@ -28,9 +31,10 @@ public class Window {
     private static Scene currentScene;
 
     public Window() {
-        this.width = 1920;
-        this.height = 1080;
+        this.width = 2560;
+        this.height = 1600;
         this.title = "help";//MandelBrot set
+
         r = 1;
         b = 1;
         g = 1;
@@ -47,7 +51,7 @@ public class Window {
     }
 
     public static void startMainScene() {
-        currentScene = new MainScene();
+        currentScene = new MainScene(get().width, get().height);
         currentScene.init();
     }
 
@@ -87,10 +91,9 @@ public class Window {
             throw new IllegalStateException("Failed to create the GLFW window.");
         }
 
-//        glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
-//        glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
-//        glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
-//        glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
+        //handle inputs
+        glfwSetScrollCallback(glfwWindow, new MouseListener());
+        glfwSetKeyCallback(glfwWindow, new KeyListener());
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow);

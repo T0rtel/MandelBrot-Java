@@ -8,7 +8,16 @@ uniform float u_zoom;       // zoom level (MOUSE WHEEL)
 uniform vec2  u_resolution; // window size in pixels
 uniform int   u_maxIter;    // iteration cap
 
-void main(){
+// https://www.stevenfrady.com/tools/palette?p=[[0.11,0.3,0.86],[0.87,0.34,0.2],[0.29,0.1,0.99],[0.81,0.95,0.99]]
+vec3 palette(float t){
+    vec3 a=vec3(0,0.5,0.5);
+    vec3 b=vec3(0,0.5,0.5);
+    vec3 c=vec3(0,0.5,0.33);
+    vec3 d=vec3(0,0.5,0.66);
+    return a+b*cos(6.28318*(c*t+d));
+}
+
+float iterate(){
     float aspect = u_resolution.x / u_resolution.y;
 
     // Map this pixel to a complex number c = (real, imaginary)
@@ -26,26 +35,18 @@ void main(){
         z = vec2(z.x * z.x - z.y * z.y + c.x, 2.0 * z.x * z.y + c.y); //x is real part, y is imaginary part
     }
 
-    // Points inside the set = black
-    if(iter == u_maxIter){
-        color = vec4(0.0, 0.0, 0.0, 1.0);
-        return;
-    }
-
     // Smooth coloring — removes harsh iteration bands
     float smooth_iter = float(iter) - log2(log2(dot(z, z))) + 4.0;
     float t = fract(smooth_iter / float(u_maxIter) * 8.0);
 
-    // Ocean color palette
-    vec3 a = vec3(0.016, 0.173, 0.325); // deep blue
-    vec3 b = vec3(0.094, 0.573, 0.812); // mid blue
-    vec3 c3 = vec3(0.976, 0.933, 0.855); // warm white
-    vec3 d = vec3(0.929, 0.365, 0.478); // pink
+    return t;
+}
 
-    vec3 col;
-    if      (t < 0.33) col = mix(a,  b,  t / 0.33);
-    else if (t < 0.66) col = mix(b,  c3, (t - 0.33) / 0.33);
-    else               col = mix(c3, d,  (t - 0.66) / 0.34);
+void main(){
+
+    float t = iterate();
+
+    vec3 col = (t == 1.)? vec3(0.) :  palette(t);
 
     color = vec4(col, 1.0);
 }

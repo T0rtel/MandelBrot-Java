@@ -74,6 +74,6 @@ public class MainScene extends Scene {
         shader.uploadVec2("u_center",     (float) centerX, (float) centerY);
         shader.uploadFloat("u_zoom",      (float) zoom);
         shader.uploadVec2("u_resolution", windowWidth, windowHeight);
-        shader.uploadInt("u_maxIter",     MAX_ITER);
+        //shader.uploadInt("u_maxIter",     MAX_ITER);
     }
 }

@@ -1,36 +1,18 @@
 package me.tortel.Classes.Renderer;
 
-import org.lwjgl.BufferUtils;
-
 import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Shader {
 
     private int shaderProgram;
+    private int vaoID;  // Core profile requires a bound VAO even with no VBOs
     String filepath;
     String vertexSrc, fragmentSrc;
-    private int vaoID, vboID, eboID;
-
-    private float[] vertexArray = {
-            // position          // color
-            1f, -1f, 0.0f,     1.0f, 0.0f, 0.0f, 1.0f,  // Bottom right 0
-            -1f,  1f, 0.0f,     0.0f, 1.0f, 0.0f, 1.0f,  // Top left     1
-            1f,  1f, 0.0f,     1.0f, 0.0f, 1.0f, 1.0f,  // Top right    2
-            -1f, -1f, 0.0f,     1.0f, 1.0f, 0.0f, 1.0f,  // Bottom left  3
-    };
-
-    private int[] elementArray = {
-            2, 1, 0,
-            0, 1, 3
-    };
 
     public Shader(String filepath) {
         this.filepath = filepath;
@@ -69,45 +51,26 @@ public class Shader {
                     glGetProgramInfoLog(shaderProgram, glGetProgrami(shaderProgram, GL_INFO_LOG_LENGTH)));
         }
 
-        // Upload geometry to GPU
+        glDeleteShader(vertexID);
+        glDeleteShader(fragmentID);
+
+        // Empty VAO — required by OpenGL Core profile even when drawing
+        // with no vertex attributes. The vertex shader uses gl_VertexID instead.
         vaoID = glGenVertexArrays();
-        glBindVertexArray(vaoID);
-
-        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertexArray.length);
-        vertexBuffer.put(vertexArray).flip();
-        vboID = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
-
-        IntBuffer elementBuffer = BufferUtils.createIntBuffer(elementArray.length);
-        elementBuffer.put(elementArray).flip();
-        eboID = glGenBuffers();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL_STATIC_DRAW);
-
-        int posSize    = 3;
-        int colorSize  = 4;
-        int stride     = (posSize + colorSize) * Float.BYTES;
-        glVertexAttribPointer(0, posSize,   GL_FLOAT, false, stride, 0);
-        glVertexAttribPointer(1, colorSize, GL_FLOAT, false, stride, posSize * Float.BYTES);
     }
 
     public void use() {
         glUseProgram(shaderProgram);
         glBindVertexArray(vaoID);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glDrawElements(GL_TRIANGLES, elementArray.length, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);  // 3 vertices → fullscreen triangle
     }
 
     public void detach() {
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
         glBindVertexArray(0);
         glUseProgram(0);
     }
 
-    // ── Uniform helpers ──────────────────────────────────────────────
+    // ── Uniform helpers ────────────────────────────────────────────────────────
 
     public void uploadFloat(String name, float value) {
         int loc = glGetUniformLocation(shaderProgram, name);

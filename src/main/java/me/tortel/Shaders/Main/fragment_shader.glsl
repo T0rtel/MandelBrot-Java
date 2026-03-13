@@ -1,4 +1,5 @@
 #version 330 core
+#define number_of_pixels_to_average 3
 
 in vec2 fragPos;
 out vec4 color;
@@ -15,6 +16,25 @@ vec3 palette(float t){
     vec3 c=vec3(0,0.5,0.33);
     vec3 d=vec3(0,0.5,0.66);
     return a+b*cos(6.28318*(c*t+d));
+}
+
+// https://www.stevenfrady.com/tools/palette?p=[[0.5,0.51,0.54],[0.82,0.23,0.27],[0.79,0.97,0.41],[0.99,0.71,0.79]]
+vec3 palette2(float t){
+    vec3 a=vec3(0.5,0.51,0.54);
+    vec3 b=vec3(0.82,0.23,0.27);
+    vec3 c=vec3(0.79,0.97,0.41);
+    vec3 d=vec3(0.99,0.71,0.79);
+    return a+b*cos(6.28318*(c*t+d));
+}
+
+float random (in vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.989,78.233))) * 43758.543);
+}
+
+float rseed = 0.;
+vec2 random2() {
+    vec2 seed = vec2(rseed++, rseed++);
+    return vec2(random(seed + 0.342), random(seed + 0.756));
 }
 
 float iterate(){
@@ -44,9 +64,29 @@ float iterate(){
 
 void main(){
 
-    float t = iterate();
+    vec3 col;
 
-    vec3 col = (t == 1.)? vec3(0.) :  palette(t);
+    if (fragPos.y >= 0.5 || fragPos.y <= -0.5){ //if the pixel is in the upper half of the screen, which is the Mandelbrot set, we color it black
 
-    color = vec4(col, 1.0);
+        for (int i = 0; i < number_of_pixels_to_average; i++){ //3 points
+            vec2 rand_xy_add = random2();
+            col += palette(iterate()); //addition of the colors of the 3 points, which will be averaged at the end
+        }
+
+        col = col / float(number_of_pixels_to_average) * 2.0; //average the colors
+
+        //float t = iterate();
+
+        //vec3 col = (t == 1.)? vec3(0.) :  col;
+
+        color = vec4(col, 1.0);
+        return;
+    }else{
+        float t = iterate();
+
+        vec3 col = (t == 1.)? vec3(0.) :  palette2(t);
+
+        color = vec4(col, 1.0);
+        return;
+    }
 }

@@ -2,6 +2,7 @@ package me.tortel.Classes;
 
 import me.tortel.Listeners.KeyListener;
 import me.tortel.Listeners.MouseListener;
+import me.tortel.Util.GpuManager;
 import me.tortel.Util.Time;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -57,6 +58,8 @@ public class Window {
 
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+
+        GpuManager.getAvailableGpus();
 
         init();
         loop();
@@ -132,7 +135,7 @@ public class Window {
 
             Time.update();
 
-            //System.out.println("FPS: " + Time.getFPS());
+            System.out.println("FPS: " + Time.getFPS());
         }
     }
 }

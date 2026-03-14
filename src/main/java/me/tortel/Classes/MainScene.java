@@ -3,7 +3,10 @@ package me.tortel.Classes;
 import me.tortel.Classes.Renderer.Shader;
 import me.tortel.Listeners.MouseListener;
 import me.tortel.Listeners.KeyListener;
+import me.tortel.Util.GpuManager;
 import org.lwjgl.glfw.GLFW;
+
+import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 
 public class MainScene extends Scene {
 
@@ -60,6 +63,10 @@ public class MainScene extends Scene {
             centerY = 0.0;
             centerX = -0.5;
             zoom = 1.0;
+        }
+
+        if (KeyListener.isKeyPressed(GLFW.GLFW_KEY_C)) {
+            GpuManager.relaunchWithGpu("NVIDIA GeForce RTX 5070 Ti Laptop GPU");
         }
 
         // Keyboard zoom fallback

@@ -1,5 +1,3 @@
-# tortel
-
 A small GPU-powered Mandelbrot set explorer, built as a for-fun side project.
 
 ## Why

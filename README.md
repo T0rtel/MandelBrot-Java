@@ -1,5 +1,8 @@
 A small GPU-powered Mandelbrot set explorer, built as a for-fun side project.
 
+![example1](pictures/example1.jpeg)
+![example2](pictures/example2.jpeg)
+
 ## Why
 
 I got interested in fractals — especially the Mandelbrot set — after watching a few videos on how it's generated. Instead of just watching, I wanted to see it myself, so I built this to zoom and pan around it live.

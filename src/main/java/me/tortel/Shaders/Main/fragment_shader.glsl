@@ -11,21 +11,21 @@ uniform float u_zoom;       // zoom level (MOUSE WHEEL)
 uniform vec2  u_resolution; // window size in pixels
 
 // https://www.stevenfrady.com/tools/palette?p=[[0.11,0.3,0.86],[0.87,0.34,0.2],[0.29,0.1,0.99],[0.81,0.95,0.99]]
-//vec3 palette(float t){
-//    vec3 a=vec3(0,0.5,0.5);
-//    vec3 b=vec3(0,0.5,0.5);
-//    vec3 c=vec3(0,0.5,0.33);
-//    vec3 d=vec3(0,0.5,0.66);
-//    return a+b*cos(6.28318*(c*t+d));
-//}
-
 vec3 palette(float t){
-    vec3 a=vec3(.5);
-    vec3 b=vec3(.5);
-    vec3 c=vec3(1.0);
-    vec3 d=vec3(.0, .10, .2);
-    return a+b*cos(6.28318 * (c*t +d));
+    vec3 a=vec3(0,0.5,0.5);
+    vec3 b=vec3(0,0.5,0.5);
+    vec3 c=vec3(0,0.5,0.33);
+    vec3 d=vec3(0,0.5,0.66);
+    return a+b*cos(6.28318*(c*t+d));
 }
+
+//vec3 palette(float t){
+//    vec3 a=vec3(.5);
+//    vec3 b=vec3(.5);
+//    vec3 c=vec3(1.0);
+//    vec3 d=vec3(.0, .10, .2);
+//    return a+b*cos(6.28318 * (c*t +d));
+//}
 
 float random (in vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.989,78.233))) * 43758.543);
